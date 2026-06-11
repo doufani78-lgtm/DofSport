@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <title>Dof SPORT </title>
+    <meta name="description" content="تابع أقوى المباريات بث مباشر بجودات عالية وبدون تقطيع عبر Dof SPORT. يلا شوت، كورة لايف، ياسين تيفي وخدمات البث الحصرية.">
+    <meta name="keywords" content="Dof SPORT, بث مباشر, مباريات اليوم, يلا شوت, كورة لايف, ياسين تيفي, ">
+    <meta name="theme-color" content="#070b14">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚽</text></svg>">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    
+    <style>
+        /* ========== المتغيرات الأساسية (VIP Theme) ========== */
+        :root {
+            --bg-deep: #030712;
+            --bg-card: #0f172a;
+            --bg-card-hover: #1e293b;
+            --accent-gold: #f59e0b;
+            --accent-gold-glow: rgba(245,158,11,0.25);
+            --accent-cyan: #06b6d4;
+            --accent-cyan-glow: rgba(6,182,212,0.3);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --live-red: #ef4444;
+            --live-red-glow: rgba(239,68,68,0.3);
+            --border-color: #1e293b;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+            --shadow-glow: 0 4px 30px rgba(0,0,0,0.5);
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: radial-gradient(ellipse at 10% 20%, #0f172a 0%, #030712 90%);
+            font-family: 'Cairo', sans-serif;
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+
+        /* ========== الحاوية الرئيسية ========== */
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 20px 16px 0;
+        }
+
+        /* ========== رأس الصفحة ========== */
+        .app-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(to left, var(--accent-cyan), var(--accent-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 12px var(--accent-cyan-glow));
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* ========== تحسين البطاقات (Match Cards) ========== */
+        .match-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 16px 18px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all var(--transition);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .match-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.03) 0%, transparent 60%);
+            pointer-events: none;
+            transition: opacity 0.3s;
+            opacity: 0;
+        }
+
+        .match-card:hover::after {
+            opacity: 1;
+        }
+
+        .match-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent-cyan);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(6, 182, 212, 0.12);
+        }
+
+        .static-card {
+            cursor: default;
+            transform: none !important;
+            border-color: var(--accent-gold);
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            margin-bottom: 18px;
+            box-shadow: 0 4px 20px var(--accent-gold-glow);
+        }
+
+        .static-card:hover {
+            box-shadow: 0 6px 24px var(--accent-gold-glow);
+        }
+
+        /* ========== الفرق والنتيجة ========== */
+        .team-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 28%;
+            text-align: center;
+        }
+
+        .team-logo {
+            width: 62px;
+            height: 62px;
+            object-fit: contain;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.04);
+            padding: 10px;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: transform 0.3s;
+            margin-bottom: 8px;
+        }
+
+        .match-card:hover .team-logo {
+            transform: scale(1.05);
+        }
+
+        .team-name {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .center-info {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status-badge {
+            font-size: 0.95rem;
+            font-weight: 900;
+            padding: 4px 18px;
+            border-radius: 30px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .live-badge {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--live-red);
+            border: 1px solid var(--live-red);
+            animation: pulseLive 2s infinite;
+        }
+
+        @keyframes pulseLive {
+            0% { box-shadow: 0 0 0 0 var(--live-red-glow); }
+            70% { box-shadow: 0 0 0 12px rgba(239,68,68,0); }
+            100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+        }
+
+        .upcoming-badge {
+            background: rgba(245, 158, 11, 0.12);
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+        }
+
+        .ended-badge {
+            background: rgba(148, 163, 184, 0.1);
+            color: var(--text-secondary);
+            border: 1px solid var(--text-secondary);
+        }
+
+        .score-time {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: white;
+            background: rgba(0,0,0,0.35);
+            padding: 6px 16px;
+            border-radius: 12px;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+
+        /* ========== مشغل الفيديو ========== */
+        .player-container {
+            background: #000;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+            box-shadow: var(--shadow-glow);
+            margin: 18px 0;
+            aspect-ratio: 16 / 9;
+            width: 100%;
+            position: relative;
+        }
+
+        .player-container iframe,
+        .player-container video {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            background: #000;
+        }
+
+        .player-loading {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.7);
+            z-index: 10;
+            transition: opacity 0.3s;
+        }
+
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 4px solid rgba(255,255,255,0.15);
+            border-top: 4px solid var(--accent-gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* ========== الأزرار ========== */
+        .btn {
+            font-family: 'Cairo', sans-serif;
+            font-weight: 800;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-fullscreen {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-cyan), #0284c7);
+            color: white;
+            font-size: 1rem;
+            padding: 14px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 14px rgba(6,182,212,0.3);
+        }
+
+        .btn-fullscreen:hover {
+            box-shadow: 0 6px 22px rgba(6,182,212,0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-back {
+            background: rgba(255,255,255,0.08);
+            color: var(--text-secondary);
+            padding: 10px 20px;
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-back:hover {
+            background: rgba(255,255,255,0.12);
+            color: white;
+        }
+
+        /* ========== خوادم البث ========== */
+        .servers-box {
+            background: var(--bg-card);
+            padding: 16px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        .servers-title {
+            font-weight: 900;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .servers-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .server-btn {
+            flex: 1 1 100px;
+            background: #1e293b;
+            color: var(--text-secondary);
+            border: 1px solid transparent;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all var(--transition);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .server-btn:hover {
+            background: #334155;
+            color: white;
+            border-color: var(--accent-cyan);
+        }
+
+        .server-btn.active-server {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-gold);
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 12px var(--accent-gold-glow);
+        }
+
+        /* ========== النافذة المنبثقة ========== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-dialog {
+            background: var(--bg-card);
+            border: 1px solid var(--live-red);
+            border-radius: var(--radius-lg);
+            padding: 30px 20px;
+            text-align: center;
+            width: 90%;
+            max-width: 340px;
+            box-shadow: 0 10px 40px rgba(239,68,68,0.25);
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .modal-dialog {
+            transform: scale(1);
+        }
+
+        .modal-icon { font-size: 3.5rem; margin-bottom: 12px; }
+        .modal-title { font-size: 1.4rem; font-weight: 900; margin-bottom: 8px; }
+        .modal-text { color: var(--text-secondary); margin-bottom: 22px; font-weight: 700; }
+
+        .modal-btn {
+            background: var(--live-red);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            font-weight: 800;
+            font-family: 'Cairo', sans-serif;
+            width: 100%;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .modal-btn:hover { background: #dc2626; }
+
+        /* ========== التذييل ========== */
+        .footer {
+            margin-top: 40px;
+            padding: 28px 16px;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .footer p {
+            margin: 0;
+            font-weight: 800;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .hidden { display: none !important; }
+
+        .status-message {
+            text-align: center;
+            padding: 70px 20px;
+            color: var(--text-secondary);
+        }
+
+        /* ========== تحسينات الجوال ========== */
+        @media (max-width: 600px) {
+            .team-logo { width: 48px; height: 48px; padding: 8px; }
+            .team-name { font-size: 0.8rem; }
+            .status-badge { font-size: 0.8rem; padding: 3px 14px; }
+            .score-time { font-size: 1.1rem; padding: 4px 12px; }
+            .match-card { padding: 12px 14px; }
+            .logo-text { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- رأس التطبيق -->
+        <div class="app-header">
+            <div class="logo-text">⚽ Dof SPORT</div>
+            <div class="subtitle">جدول مباريات اليوم - بث مباشر بجودة عالية</div>
+        </div>
+        
+        <!-- حالة التحميل -->
+        <div id="loadingView" class="status-message">
+            <div class="spinner" style="margin: 0 auto 20px;"></div>
+            <div id="loadingText">جاري تحميل جدول المباريات...</div>
+        </div>
+        
+        <!-- عرض جدول المباريات -->
+        <div id="scheduleView" class="hidden">
+            <div id="matchesList"></div>
+        </div>
+
+        <!-- واجهة المشغل -->
+        <div id="playerView" class="hidden">
+            <button class="btn btn-back" onclick="closePlayer()">← العودة إلى جدول المباريات</button>
+            
+            <div id="activeMatchCard"></div>
+
+            <div class="player-container" id="playerContainer">
+                <iframe id="iframePlayer" class="hidden" allowfullscreen="true" scrolling="no" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
+                <video id="hlsPlayer" class="hidden" controls playsinline></video>
+                <div class="player-loading" id="playerLoading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+            
+            <button class="btn btn-fullscreen" onclick="toggleFullscreen()">
+                📺 تكبير الشاشة
+            </button>
+
+            <!-- سيرفرات المشاهدة -->
+            <div class="servers-box">
+                <div class="servers-title">🖥️ سيرفرات المشاهدة المتاحة</div>
+                <div class="servers-grid" id="serversGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- النافذة التحذيرية (لا يوجد بث) -->
+    <div id="noServerModal" class="modal-overlay">
+        <div class="modal-dialog">
+            <div class="modal-icon">⚠️</div>
+            <h3 class="modal-title">عذراً!</h3>
+            <p class="modal-text">لا يتوفر سيرفر بث لهذه المباراة في الوقت الحالي، يرجى المحاولة لاحقاً.</p>
+            <button class="modal-btn" onclick="closeModal()">حسناً، العودة للجدول</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>© 2026 Dof SPORT |جميع الحقوق محفوظة | مطور بواسطة DOF </p>
+    </footer>
+
+    <script>
+        // ======================== حماية متقدمة ========================
+        (function() {
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            document.addEventListener('keydown', e => {
+                if (e.key === 'F12' || 
+                    (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || 
+                    (e.ctrlKey && e.key === 'U')) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            // تعطيل أدوات المطور بشكل مبتكر
+            setInterval(() => {
+                const threshold = 160;
+                const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                if (widthThreshold || heightThreshold) {
+                    document.body.innerHTML = '<h1 style="color:red;text-align:center;margin-top:20%;">تم اكتشاف أداة فحص، يرجى إغلاقها.</h1>';
+                }
+            }, 1000);
+        })();
+
+        // ======================== دوال مساعدة ========================
+        const WORKER_URL = "https://ali.albasritv1.workers.dev/";
+        const loadingView = document.getElementById("loadingView");
+        const loadingText = document.getElementById("loadingText");
+        const scheduleView = document.getElementById("scheduleView");
+        const matchesList = document.getElementById("matchesList");
+        const playerView = document.getElementById("playerView");
+        const activeMatchCard = document.getElementById("activeMatchCard");
+        const iframePlayer = document.getElementById("iframePlayer");
+        const hlsPlayer = document.getElementById("hlsPlayer");
+        const playerLoading = document.getElementById("playerLoading");
+        const serversGrid = document.getElementById("serversGrid");
+        let activeHls = null;
+        let currentMatchData = null;
+
+        function toggleFullscreen() {
+            const el = document.getElementById('playerContainer');
+            if (!document.fullscreenElement) {
+                el.requestFullscreen().catch(() => {});
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // تحسين رابط الشعار
+        function getCleanImg(url) {
+            if (!url) return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%231e293b'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='20'%3E⚽%3C/text%3E%3C/svg%3E";
+            let u = url.trim();
+            if (u.startsWith("http://") || u.startsWith("https://")) return u;
+            if (u.startsWith("//")) return "https:" + u;
+            return "https://koooracity.com/" + u.replace(/^\//, '');
+        }
+
+        function formatTime(t) {
+            if(!t) return "";
+            let clean = t.toString().replace(/⏰/g, '').trim();
+            let parts = clean.match(/(\d{1,2}):(\d{2})/);
+            if (parts) {
+                let hours = parseInt(parts[1]);
+                let minutes = parts[2];
+                let ampm = hours >= 12 ? 'م' : 'ص';
+                hours = hours % 12 || 12;
+                return `${hours}:${minutes} ${ampm}`;
+            }
+            return clean;
+        }
+
+        function createMatchHTML(m, statusClass, statusText, centerValue) {
+            return `
+                <div class="team-box">
+                    <img class="team-logo" src="${getCleanImg(m.team1.logo)}" alt="${m.team1.name}" loading="lazy">
+                    <span class="team-name">${m.team1.name}</span>
+                </div>
+                <div class="center-info">
+                    <div class="status-badge ${statusClass}">${statusText}</div>
+                    <div class="score-time">${centerValue}</div>
+                </div>
+                <div class="team-box">
+                    <img class="team-logo" src="${getCleanImg(m.team2.logo)}" alt="${m.team2.name}" loading="lazy">
+                    <span class="team-name">${m.team2.name}</span>
+                </div>
+            `;
+        }
+
+        // ======================== جلب المباريات ========================
+        async function loadMatches() {
+            try {
+                const res = await fetch(WORKER_URL);
+                const result = await res.json();
+                if (result.success && Array.isArray(result.data)) {
+                    renderMatches(result.data);
+                } else {
+                    loadingText.textContent = "لا توجد مباريات متاحة الآن.";
+                }
+            } catch (e) {
+                loadingText.textContent = "تعذر الاتصال بالخادم، تحقق من اتصالك وحاول مجدداً.";
+            }
+        }
+
+        function renderMatches(list) {
+            loadingView.classList.add("hidden");
+            scheduleView.classList.remove("hidden");
+            matchesList.innerHTML = "";
+
+            if (list.length === 0) {
+                matchesList.innerHTML = "<div class='status-message'>🎉 لا توجد مباريات مبرمجة اليوم.</div>";
+                return;
+            }
+
+            list.forEach(m => {
+                let statusClass = "", statusText = m.status, centerValue = "";
+                const score = `${m.team1.goals || 0} - ${m.team2.goals || 0}`;
+
+                if (m.priority === 1) {
+                    statusText = "جاري الآن";
+                    statusClass = "live-badge";
+                    centerValue = score;
+                } else if (m.priority === 3) {
+                    statusText = "انتهت";
+                    statusClass = "ended-badge";
+                    centerValue = score;
+                } else {
+                    statusText = "لم تبدأ";
+                    statusClass = "upcoming-badge";
+                    centerValue = formatTime(m.time);
+                }
+
+                const cardHTML = createMatchHTML(m, statusClass, statusText, centerValue);
+                const div = document.createElement("div");
+                div.className = "match-card";
+                div.innerHTML = cardHTML;
+                
+                div.addEventListener('click', () => {
+                    // حفظ بيانات المباراة الحالية
+                    currentMatchData = m;
+                    activeMatchCard.innerHTML = `<div class="match-card static-card">${cardHTML}</div>`;
+                    startLiveSetup(m.link);
+                });
+                
+                matchesList.appendChild(div);
+            });
+
+            // إضافة تأثير حركي للفأرة على البطاقات (اختياري)
+            document.querySelectorAll('.match-card').forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width) * 100;
+                    const y = ((e.clientY - rect.top) / rect.height) * 100;
+                    card.style.setProperty('--mouse-x', `${x}%`);
+                    card.style.setProperty('--mouse-y', `${y}%`);
+                });
+            });
+        }
+
+        // ======================== بدء البث ========================
+        async function startLiveSetup(linkUrl) {
+            scheduleView.classList.add("hidden");
+            loadingView.classList.remove("hidden");
+            loadingText.textContent = "جاري تجهيز سيرفرات البث...";
+
+            try {
+                const res = await fetch(linkUrl);
+                const result = await res.json();
+                
+                if (result.success && result.servers && result.servers.length > 0) {
+                    // الدخول إلى واجهة المشغل
+                    history.pushState({ view: "player" }, "");
+                    
+                    loadingView.classList.add("hidden");
+                    playerView.classList.remove("hidden");
+                    serversGrid.innerHTML = "";
+                    
+                    stopVideo();
+                    // تشغيل أول سيرفر
+                    playServer(result.servers[0].url, result.servers[0].type, null);
+
+                    // إنشاء أزرار السيرفرات
+                    result.servers.forEach((srv, i) => {
+                        const btn = document.createElement("button");
+                        btn.className = "server-btn";
+                        if (i === 0) btn.classList.add("active-server");
+                        
+                        let srvLabel = srv.name;
+                        if (srvLabel.includes("M3U")) srvLabel = `🎬 السيرفر الرئيسي ${i+1}`;
+                        else if (srvLabel.includes("Web")) srvLabel = `🌐 سيرفر ويب ${i+1}`;
+                        
+                        btn.textContent = srvLabel;
+                        btn.addEventListener('click', (e) => {
+                            playServer(srv.url, srv.type, e.currentTarget);
+                        });
+                        serversGrid.appendChild(btn);
+                    });
+                } else {
+                    showNoServerModal();
+                }
+            } catch(e) {
+                showNoServerModal();
+            }
+        }
+
+        function showNoServerModal() {
+            loadingView.classList.add("hidden");
+            scheduleView.classList.remove("hidden");
+            document.getElementById("noServerModal").classList.add("active");
+        }
+
+        function closeModal() {
+            document.getElementById("noServerModal").classList.remove("active");
+        }
+
+        // إغلاق النافذة بالنقر خارجها
+        document.getElementById("noServerModal").addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // ======================== تشغيل السيرفر ========================
+        function playServer(url, type, btnElement) {
+            stopVideo();
+            playerLoading.style.display = "flex";
+
+            if (btnElement) {
+                document.querySelectorAll(".server-btn").forEach(b => b.classList.remove("active-server"));
+                btnElement.classList.add("active-server");
+            }
+
+            if (type === "m3u8") {
+                iframePlayer.classList.add("hidden");
+                hlsPlayer.classList.remove("hidden");
+                
+                if (Hls.isSupported()) {
+                    activeHls = new Hls({
+                        enableWorker: true,
+                        lowLatencyMode: true,
+                    });
+                    activeHls.loadSource(url);
+                    activeHls.attachMedia(hlsPlayer);
+                    activeHls.on(Hls.Events.MANIFEST_PARSED, () => {
+                        hlsPlayer.play().then(() => {
+                            playerLoading.style.display = "none";
+                        }).catch(() => {
+                            playerLoading.style.display = "none";
+                        });
+                    });
+                    activeHls.on(Hls.Events.ERROR, (event, data) => {
+                        if (data.fatal) {
+                            playerLoading.style.display = "flex";
+                            loadingText.textContent = "تعذر تشغيل هذا السيرفر، جرب آخر.";
+                        }
+                    });
+                } else if (hlsPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+                    hlsPlayer.src = url;
+                    hlsPlayer.play().then(() => {
+                        playerLoading.style.display = "none";
+                    }).catch(() => {
+                        playerLoading.style.display = "none";
+                    });
+                }
+            } else {
+                hlsPlayer.classList.add("hidden");
+                iframePlayer.classList.remove("hidden");
+                iframePlayer.src = url;
+                iframePlayer.onload = () => {
+                    playerLoading.style.display = "none";
+                };
+                // وقت احتياطي للإخفاء
+                setTimeout(() => {
+                    if (playerLoading.style.display !== "none") playerLoading.style.display = "none";
+                }, 4000);
+            }
+        }
+
+        function stopVideo() {
+            iframePlayer.src = "";
+            iframePlayer.onload = null;
+            if (activeHls) {
+                activeHls.destroy();
+                activeHls = null;
+            }
+            hlsPlayer.pause();
+            hlsPlayer.removeAttribute('src');
+            hlsPlayer.load();
+            playerLoading.style.display = "flex";
+        }
+
+        // ======================== العودة للجدول ========================
+        function closePlayer() {
+            stopVideo();
+            playerView.classList.add("hidden");
+            scheduleView.classList.remove("hidden");
+            // إزالة حالة السجل إذا لزم
+            if (history.state && history.state.view === "player") {
+                history.back();
+            }
+        }
+
+        // التعامل مع زر الرجوع في المتصفح
+        window.addEventListener('popstate', function(event) {
+            if (!playerView.classList.contains("hidden")) {
+                closePlayer();
+            }
+        });
+
+        // بدء التطبيق
+        loadMatches();
+    </script>
+</body>
+</html>
